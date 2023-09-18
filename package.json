@@ -1,0 +1,16 @@
+{
+  "name": "linkedin-easy-peasy-apply-bot",
+  "version": "1.0.0",
+  "description": "This bot simplifies the job application process on LinkedIn by automating the 'Easy Apply' feature. It can help you save time and effortlessly apply for jobs on LinkedIn.",
+  "main": "index.js",
+  "scripts": {
+    "bot": "node easy-apply"
+  },
+  "keywords": ["linkedin", "easy-apply", "bot"],
+  "type": "module",
+  "author": "Maksim Shamihulau",
+  "license": "ISC",
+  "dependencies": {
+    "playwright": "^1.37.1"
+  }
+}
