@@ -15,12 +15,12 @@ Before you get started, make sure you have the following installed on your syste
 ## Installation
 1. Clone this repository to your local machine:
    ```bash
-   git clone https://github.com/bomzj/linkedin-easy-peasy-apply-bot.git
+   git clone https://github.com/bomzj/easy-peasy-apply.git
    ```
 
 2. Navigate to the project directory:
    ```bash
-   cd linkedin-easy-peasy-apply-bot
+   cd easy-peasy-apply
    ```
 
 3. Install the required dependencies:
