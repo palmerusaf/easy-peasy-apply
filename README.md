@@ -29,9 +29,10 @@ Before you get started, make sure you have the following installed on your syste
    ```
 
 ## Configuration
-1. Open the `easy-apply.js` file.
+1. Open the `config.js.example` file.
 2. Configure your LinkedIn login credentials and search parameters.
 3. Save the changes.
+4. Rename `config.js.example` to `config.js`.
 
 ## Usage
 1. Run the bot:
