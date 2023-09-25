@@ -2,16 +2,17 @@ import { chromium } from 'playwright'
 import fs from 'fs'
 import { fileURLToPath } from 'url'
 import path from 'path'
+import config from './config'
 
 // ============ Config =================
 
-const email = 'your_email'
-const password = 'your_password'
-
-const keywordsList = ['react', 'F#', 'python']
-const location = 'Worldwide'// e.g. 'European Union', 'Remote', 'Norway'
-// PastWeek = 'r604800'
-const date = 'r604800'
+const { 
+  email, 
+  password, 
+  keywordsList, 
+  date, 
+  location, 
+  keywordsBlackList } = config
 
 // =====================================
 
@@ -63,11 +64,10 @@ await page.click('button[type=submit]')
 
 log('Successfully logged in!')
 
-log('Starting to apply for jobs...')
-
 // Run Search-Apply process sequentially for all keywords
 try {
   await forEachAsync(keywordsList, async keywords => {
+    log(`Searching jobs that match "${keywords}"`)
     await searchJobs(keywords)
     await applyUntilNoMoreJobs(keywords)
   })
@@ -125,11 +125,22 @@ async function isJobValidForApplying(keywords) {
   const hasKeywords = await hasJobKeywords(keywords)
   if (!hasKeywords) return false
   
+  const hasBlackListedKeywords = await hasJobBlackListedKeywords()
+  if (hasBlackListedKeywords) return false
+
   return true
 }
 
 async function hasJobKeywords(keywords) {
   const re = RegExp(keywords, 'gi')
+  const jobDetails = await page
+    .locator('.jobs-search__job-details--container')
+    .innerText()
+  return !!jobDetails.match(re)
+}
+
+async function hasJobBlackListedKeywords() {
+  const re = RegExp(keywordsBlackList.join('|'), 'gi')
   const jobDetails = await page
     .locator('.jobs-search__job-details--container')
     .innerText()
@@ -258,7 +269,9 @@ async function nextJob() {
   // Wait until job details(right pane) get in sync with job list(left pane)
   const nextJobId = (await currentJob()).id
   await page
-    .locator(`.jobs-unified-top-card__content--two-pane a[href*="${nextJobId}"]`)
+    .locator(
+      `.job-details-jobs-unified-top-card__content--two-pane a[href*="${nextJobId}"]`
+    )
     .waitFor()
   
   return true
