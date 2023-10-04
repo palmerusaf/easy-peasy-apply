@@ -207,7 +207,7 @@ async function clickNextUntilAppliedOrStuck() {
   // Uncheck Follow the Company checkbox at the last step
   if (progressBefore == 100) 
     await easyApplyModal
-    .locator('[name="followCompanyCheckbox"] + label')
+    .locator('[for="follow-company-checkbox"]')
     .click()
     .catch(() => log(`Couldn't uncheck Follow Company checkbox.`))
   
