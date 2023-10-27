@@ -128,6 +128,14 @@ async function isJobValidForApplying(keywords) {
   const hasBlackListedKeywords = await hasJobBlackListedKeywords()
   if (hasBlackListedKeywords) return false
 
+  // LinkedIn sometimes includes non-easy-apply jobs in search results list, 
+  // so we have to exclude such
+  const isExternalLink = await page
+    .locator('.jobs-search__job-details .jobs-s-apply button[role]')
+    .first()
+    .isVisible()
+  if (isExternalLink) return false
+
   return true
 }
 
