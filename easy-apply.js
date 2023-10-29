@@ -38,21 +38,13 @@ const fd = fs.openSync(logFilepath, 'a')
 log('Launching Chrome browser...')
 
 // Start up browser
-const browser = await chromium.launch({headless: false, viewport: null})
+const browser = await chromium.launch({headless: false, args: ["--start-maximized"]})
 const context = await browser.newContext({ 
   userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
-    'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36' 
+    'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+  viewport: null
 })
 const page = await context.newPage()
-
-// const browser = await chromium.launchPersistentContext(
-//   'C:\\Users\\maksi\\AppData\\Local\\Google\\Chrome\\User Data\\Default', 
-//   { 
-//     headless: false, // run in browser window
-//     viewport: null,  // fullscreen
-//   }
-// )
-// const page = await browser.newPage()
 
 log('Logging in to LinkedIn...')
 
