@@ -67,6 +67,7 @@ try {
   log('Unexpected error: ' + e)
 }
 
+await context.close()
 await browser.close()
 
 log('Finished applying for jobs.')
