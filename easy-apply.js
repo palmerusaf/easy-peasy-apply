@@ -1,60 +1,68 @@
-import { chromium } from 'playwright'
-import fs from 'fs'
-import { fileURLToPath } from 'url'
-import path from 'path'
-import config from './config.js'
+import { chromium } from 'playwright';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import config from './config.js';
 
 // ============ Config =================
-
-const { 
-  email, 
-  password, 
-  keywordsList, 
-  date, 
-  location, 
-  keywordsBlackList } = config
-
+const {
+  email,
+  password,
+  keywordsList,
+  date,
+  location,
+  keywordsBlackList,
+} = config;
 // =====================================
 
 // ============== Main ==================
 // Stats
-let jobsAppliedCount = 0
-let jobsFailedCount = 0
-let jobsProcessedCount = 0
+let jobsAppliedCount = 0;
+let jobsFailedCount = 0;
+let jobsProcessedCount = 0;
 
 // File log
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const logFilename = new Date()
   .toISOString()
   .slice(0, 19)
   .replaceAll(':', '-')
-  .concat('.log')
-  
-const logFilepath = path.resolve(__dirname, './logs/', logFilename)
-const fd = fs.openSync(logFilepath, 'a')
+  .concat('.log');
 
-log('Launching Chrome browser...')
+const logFilepath = path.resolve(__dirname, './logs/', logFilename);
+const fd = fs.openSync(logFilepath, 'a');
+
+console.log('Launching Chrome browser...');
 
 // Start up browser
-const browser = await chromium.launch({headless: false, args: ["--start-maximized"]})
-const context = await browser.newContext({ 
-  userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
-    'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
-  viewport: null
-})
-const page = await context.newPage()
+const launchOptions = { headless: false, args: ["--start-maximized"] };
+const browser = await chromium.launch(launchOptions);
+const context = await browser.newContext({
+  userAgent:
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+  viewport: null,
+});
+const page = await context.newPage();
 
-log('Logging in to LinkedIn...')
+console.log('Logging in to LinkedIn...');
 
 // Log in
-await page.goto('https://www.linkedin.com/')
-await page.type('#session_key', email)
-await page.type('#session_password', password)
-await page.click('button[type=submit]')
+const util = await import('util');
 
-log('Successfully logged in!')
+// Wrap setTimeout with a Promise
+const sleep = util.promisify(setTimeout);
+
+await page.goto('https://www.linkedin.com/');
+await page.type('#session_key', email);
+await page.type('#session_password', password);
+await page.click('button[type=submit]');
+
+// Sleep Thread (3000 milliseconds)
+await sleep(3000);
+
+console.log('Successfully logged in!');
 
 // Run Search-Apply process sequentially for all keywords
 try {
