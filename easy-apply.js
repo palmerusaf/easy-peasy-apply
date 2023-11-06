@@ -199,36 +199,47 @@ async function applyForJob() {
   return applied
 }
 
+async function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function clickNextUntilAppliedOrStuck() {
   // Mimic a user slow interaction
-  await randomWait(2000, 5000)
-  
-  const easyApplyModal = page.locator('[data-test-modal-id="easy-apply-modal"]')
+  await randomWait(2000, 5000);
+
+  const easyApplyModal = page.locator('[data-test-modal-id="easy-apply-modal"]');
 
   // Track progress to determine whether we got stuck (job requires manual applying)
   const progress = async () =>
-    await easyApplyModal.locator('progress').isVisible() 
-      ? await easyApplyModal.locator('progress').getAttribute('value') 
-      : 100
+    await easyApplyModal.locator('progress').isVisible()
+      ? await easyApplyModal.locator('progress').getAttribute('value')
+      : 100;
 
-  const progressBefore = +(await progress())
-  
+  const progressBefore = +(await progress());
+
   // Uncheck Follow the Company checkbox at the last step
-  if (progressBefore == 100) 
+  if (progressBefore == 100) {
     await easyApplyModal
-    .locator('[for="follow-company-checkbox"]')
-    .click()
-    .catch(() => log(`Couldn't uncheck Follow Company checkbox.`))
-  
+      .locator('[for="follow-company-checkbox"]')
+      .click()
+      .catch(() => log(`Couldn't uncheck Follow Company checkbox.`));
+  }
+
+  // Delay for 5 seconds
+  await delay(5000);
+
   // Click next step
-  await easyApplyModal.locator('.artdeco-button--primary').click()
+  await easyApplyModal.locator('.artdeco-button--primary').click();
 
-  const progressAfter = +(await progress())
+  const progressAfter = +(await progress());
 
-  // Proceed to the next step until we applied for the job or got stuck 
-  if (progressAfter > progressBefore)
-    await clickNextUntilAppliedOrStuck()
+  // Proceed to the next step until we applied for the job or got stuck
+  if (progressAfter > progressBefore) {
+    await delay(5000); // Delay for 5 seconds before proceeding
+    await clickNextUntilAppliedOrStuck();
+  }
 }
+
 
 async function nextJob() {
   const currentJobId = (await currentJob()).id
