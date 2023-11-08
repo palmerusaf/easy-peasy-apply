@@ -38,13 +38,15 @@ console.log('Launching Chrome browser...');
 
 // Start up browser
 const launchOptions = { headless: false, args: ["--start-maximized"] };
-const browser = await chromium.launch(launchOptions);
-const context = await browser.newContext({
-  userAgent:
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
-  viewport: null,
-});
-const page = await context.newPage();
+// const browser = await chromium.launch(launchOptions);
+const browser = await chromium.launchPersistentContext(`/home/branden/.config/chromium/`, launchOptions)
+// const context = await browser.newContext({
+//   userAgent:
+//     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
+//   viewport: null,
+// });
+// const page = await context.newPage();
+const page = await browser.newPage();
 
 console.log('Logging in to LinkedIn...');
 
@@ -58,9 +60,9 @@ await page.goto('https://www.linkedin.com/');
 await page.type('#session_key', email);
 await page.type('#session_password', password);
 await page.click('button[type=submit]');
-
+//
 // Sleep Thread (3000 milliseconds)
-await sleep(3000);
+await sleep(60000);
 
 console.log('Successfully logged in!');
 
@@ -75,7 +77,7 @@ try {
   log('Unexpected error: ' + e)
 }
 
-await context.close()
+// await context.close()
 await browser.close()
 
 log('Finished applying for jobs.')
@@ -158,7 +160,7 @@ async function hasJobBlackListedKeywords() {
 
 async function applyForJob() {
   // Click Easy Apply button within job details right pane
-  await page.locator('.jobs-apply-button').first().click()
+  await page.locator('.jobs-apply-button').first().click({ timeout: 0 })
 
   // Wait for Easy Apply modal to appear
   const easyApplyModal = page.locator('[data-test-modal-id="easy-apply-modal"]')
@@ -178,7 +180,7 @@ async function applyForJob() {
   if (applied) {
     // Wait for follow-up Done/Add Skills modal to close,
     // that appears in a few seconds after Easy Modal closed
-    await page.click('[data-test-modal-close-btn]', { timeout: 5000 }).catch(() => { })
+    await page.click('[data-test-modal-close-btn]', { timeout: 0 }).catch(() => { })
 
     // Update stats
     jobsAppliedCount++
