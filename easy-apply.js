@@ -96,7 +96,7 @@ async function searchJobs(keywords) {
     `f_WT=2&` + // Remote
     `f_AL=true` // Easy Apply
 
-  await page.goto(url)
+  await page.goto(url, { timeout: 0 })
 }
 
 async function applyUntilNoMoreJobs(keywords) {
