@@ -176,9 +176,9 @@ async function applyForJob() {
   await randomWait(2000, 5000)
 
   // Did we apply successfully? If we applied, then easy apply modal is already closed
-  const applied = await easyApplyModal.waitFor()
-    .then(() => false)
-    .catch(() => true)
+  const applied = await easyApplyModal.waitFor({ state: "detached", timeout: 3000 })
+    .then(() => true)
+    .catch(() => false)
 
   if (applied) {
     // Wait for follow-up Done/Add Skills modal to close,
