@@ -90,7 +90,7 @@ log('Failed to apply count: ' + jobsFailedCount)
 
 async function searchJobs(keywords) {
   const url = 'https://www.linkedin.com/jobs/search/?refresh=true&' +
-    `keywords=${keywords}&` + 
+    `keywords=${keywords}&` +
     `f_TPR=${date}&` +
     `location=${location}&` +
     `f_WT=2&` + // Remote
@@ -114,7 +114,7 @@ async function applyUntilNoMoreJobs(keywords) {
     await randomWait(2000, 3000)
   }
 
-  if (await nextJob()) 
+  if (await nextJob())
     await applyUntilNoMoreJobs(keywords)
 }
 
@@ -122,12 +122,12 @@ async function isJobValidForApplying(keywords) {
   const job = await currentJob()
 
   if (job.applied) return false
-  
-  const hasKeywords = await hasJobKeywords(keywords)
-  if (!hasKeywords) return false
-  
-  const hasBlackListedKeywords = await hasJobBlackListedKeywords()
-  if (hasBlackListedKeywords) return false
+
+  // const hasKeywords = await hasJobKeywords(keywords)
+  // if (!hasKeywords) return false
+  //
+  // const hasBlackListedKeywords = await hasJobBlackListedKeywords()
+  // if (hasBlackListedKeywords) return false
 
   // LinkedIn sometimes includes non-easy-apply jobs in search results list, 
   // so we have to exclude such
@@ -169,7 +169,7 @@ async function applyForJob() {
 
   // wait a bit before closing modals
   await randomWait(2000, 5000)
-  
+
   // Did we apply successfully? If we applied, then easy apply modal is already closed
   const applied = await easyApplyModal.waitFor()
     .then(() => false)
@@ -178,7 +178,7 @@ async function applyForJob() {
   if (applied) {
     // Wait for follow-up Done/Add Skills modal to close,
     // that appears in a few seconds after Easy Modal closed
-    await page.click('[data-test-modal-close-btn]', { timeout: 5000 }).catch(() => {})
+    await page.click('[data-test-modal-close-btn]', { timeout: 5000 }).catch(() => { })
 
     // Update stats
     jobsAppliedCount++
@@ -191,11 +191,11 @@ async function applyForJob() {
       .locator('[data-test-modal-id="data-test-easy-apply-discard-confirmation"]')
       .locator('[data-control-name="discard_application_confirm_btn"]')
       .click()
-    
+
     // Update stats
     jobsFailedCount++
   }
-  
+
   return applied
 }
 
@@ -254,33 +254,33 @@ async function nextJob() {
     .locator('[data-test-pagination-page-btn]')
     .last()
     .getAttribute('data-test-pagination-page-btn', { timeout: 1000 })
-    .catch(() => {}) // In case if there is no pagination at all
+    .catch(() => { }) // In case if there is no pagination at all
 
   const currentPage = await page
     .locator('[data-test-pagination-page-btn].active')
     .getAttribute('data-test-pagination-page-btn', { timeout: 1000 })
-    .catch(() => {})
+    .catch(() => { })
 
   // Quit if no more jobs
   if (currentPage == lastPage && currentJobId == lastJobId) {
     return false
-  } 
+  }
   // Go to next page if current job is the last one
   else if (currentJobId == lastJobId) {
     await page
       .click('li[data-test-pagination-page-btn].active + li')
-      .catch(() => {})
-  } 
+      .catch(() => { })
+  }
   // Go to next job
   else {
     // Select/click next job
     await page.click(`li[data-occludable-job-id="${currentJobId}"] + li`)
-    
+
     // Scroll down a bit to make sure new jobs load
     const scrollHeight = await page
       .locator(`li[data-occludable-job-id="${currentJobId}"] + li`)
       .evaluate(node => node.scrollHeight)
-    
+
     await page
       .locator('.jobs-search-results-list')
       .evaluate((node, scrollHeight) => node.scrollBy(0, scrollHeight), scrollHeight)
@@ -293,13 +293,13 @@ async function nextJob() {
       `.job-details-jobs-unified-top-card__content--two-pane a[href*="${nextJobId}"]`
     )
     .waitFor()
-  
+
   return true
 }
 
 async function currentJob() {
   const container = page.locator('.jobs-search-results-list__list-item--active')
-  
+
   const id = await container.getAttribute('data-job-id')
   const company = await container
     .locator('.job-card-container__primary-description')
@@ -307,7 +307,7 @@ async function currentJob() {
 
   const link = container.locator('.job-card-container__link')
   const title = await link.innerText()
-  const url = 'https://www.linkedin.com' + 
+  const url = 'https://www.linkedin.com' +
     (await link.getAttribute('href')).split('?')[0] // remove very long query string
 
   const applied = await page
@@ -330,15 +330,15 @@ function log(msg) {
 
 async function logJobAppliedStatus() {
   const { title, company, url, applied } = await currentJob()
-  const msg = applied ? 
-    `Successfully applied for '${title}' at '${company}' ${url}`: 
+  const msg = applied ?
+    `Successfully applied for '${title}' at '${company}' ${url}` :
     `Failed to apply for '${title}' at '${company}' ${url}`
   log(msg)
 }
 
 async function forEachAsync(array, asyncFn) {
   return array.reduce(
-    (promise, val) => promise.then(asyncFn.bind(null, val)), 
+    (promise, val) => promise.then(asyncFn.bind(null, val)),
     Promise.resolve()
   )
 }
