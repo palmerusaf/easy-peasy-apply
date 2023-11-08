@@ -56,13 +56,13 @@ const util = await import('util');
 // Wrap setTimeout with a Promise
 const sleep = util.promisify(setTimeout);
 
-await page.goto('https://www.linkedin.com/');
-await page.type('#session_key', email);
-await page.type('#session_password', password);
-await page.click('button[type=submit]');
+await page.goto('https://www.linkedin.com/', { timeout: 0 });
+// await page.type('#session_key', email);
+// await page.type('#session_password', password);
+// await page.click('button[type=submit]');
 //
 // Sleep Thread (3000 milliseconds)
-await sleep(60000);
+await sleep(3000);
 
 console.log('Successfully logged in!');
 
