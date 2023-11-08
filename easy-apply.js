@@ -139,6 +139,9 @@ async function isJobValidForApplying(keywords) {
     .isVisible()
   if (isExternalLink) return false
 
+  const noLongerAcceptingApps = await page.locator(".artdeco-inline-feedback__message", { hasText: "No longer accepting applications" }).first().isVisible()
+  if (noLongerAcceptingApps) return false;
+
   return true
 }
 
