@@ -6,14 +6,35 @@ import config from './config.js';
 
 // ============ Config =================
 const {
-  email,
-  password,
-  keywordsList,
+  // email,
+  // password,
   date,
+  searchRoles,
+  searchExcluders,
+  searchModifiers,
   location,
   keywordsBlackList,
 } = config;
 // =====================================
+
+
+const buildSearchKeywords = () => {
+  let result = [];
+  searchRoles.forEach(role => {
+    searchModifiers.forEach(mod => {
+      const searchTerm = `${mod} ${role}`;
+      result.push(searchTerm)
+    })
+  })
+  result = result.map(term => {
+    searchExcluders.forEach(excluder => {
+      term += ` -${excluder}`;
+    })
+    return term;
+  })
+  return result;
+}
+const searchKeywords = buildSearchKeywords();
 
 // ============== Main ==================
 // Stats
