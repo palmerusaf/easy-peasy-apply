@@ -48,7 +48,7 @@ const browser = await chromium.launchPersistentContext(`/home/branden/.config/ch
 // const page = await context.newPage();
 const page = await browser.newPage();
 
-console.log('Logging in to LinkedIn...');
+// console.log('Logging in to LinkedIn...');
 
 // Log in
 const util = await import('util');
@@ -56,19 +56,19 @@ const util = await import('util');
 // Wrap setTimeout with a Promise
 const sleep = util.promisify(setTimeout);
 
-await page.goto('https://www.linkedin.com/', { timeout: 0 });
+// await page.goto('https://www.linkedin.com/', { timeout: 0 });
 // await page.type('#session_key', email);
 // await page.type('#session_password', password);
 // await page.click('button[type=submit]');
 //
 // Sleep Thread (3000 milliseconds)
-await sleep(3000);
+// await sleep(1500);
 
-console.log('Successfully logged in!');
+// console.log('Successfully logged in!');
 
 // Run Search-Apply process sequentially for all keywords
 try {
-  await forEachAsync(keywordsList, async keywords => {
+  await forEachAsync(searchKeywords, async keywords => {
     log(`Searching jobs that match "${keywords}"`)
     await searchJobs(keywords)
     await applyUntilNoMoreJobs(keywords)
