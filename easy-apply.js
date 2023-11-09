@@ -324,7 +324,7 @@ async function currentJob() {
 }
 
 async function randomWait(min, max) {
-  const delay = Math.max(min, max * Math.random())
+  const delay = Math.max(1000, 2000 * Math.random())
   return page.waitForTimeout(delay)
 }
 
