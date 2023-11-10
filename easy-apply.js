@@ -211,7 +211,7 @@ async function applyForJob() {
   }
   else {
     // Close Easy Apply Modal
-    await easyApplyModal.locator('[data-test-modal-close-btn]').click({ timeout: 3000 })
+    await easyApplyModal.locator('[data-test-modal-close-btn]').click({ timeout: 0 })
     await randomWait(2000, 3000)
     await page
       .locator('[data-test-modal-id="data-test-easy-apply-discard-confirmation"]')
